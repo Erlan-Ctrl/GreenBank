@@ -1,6 +1,6 @@
 name: banco_digital
 description: "A new Flutter project."
-publish_to: 'none' # Remove esta linha se quiser publicar no pub.dev
+publish_to: 'none'
 
 version: 1.0.0+1
 
@@ -11,26 +11,31 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # Ícones no estilo iOS
   cupertino_icons: ^1.0.8
+  http: ^0.13.6
+  mobile_scanner: ^3.5.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-  # Lint recomendada pelo Flutter
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
+  flutter_native_splash: ^2.4.0
 
 flutter:
-  # Habilita ícones do Material Design
   uses-material-design: true
-
-  # Imagens e recursos usados no app
   assets:
     - assets/profile.jpg
     - assets/banner_forest.png
     - assets/work_in_progress.png
+    - assets/Logo.png
+    - assets/logobank.jpg
+    - assets/logo_splash.jpg
+    - assets/qrcode-icon.png
 
-dependencies:
-  http: ^0.13.5
-  qr_code_scanner: ^1.0.1
+flutter_native_splash:
+  color: "#F1F8E9"
+  image: assets/logo.png
+  android: true
+  ios: false
+  fullscreen: true
+  android_gravity: center
