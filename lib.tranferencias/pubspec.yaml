@@ -1,0 +1,4 @@
+dependencies:
+  http: ^0.13.5
+  qr_code_scanner: ^1.0.1
+  
