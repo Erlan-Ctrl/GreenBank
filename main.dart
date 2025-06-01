@@ -1,0 +1,341 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Banco Digital',
+      theme: ThemeData(
+        primaryColor: const Color(0xFF325F2A),
+        scaffoldBackgroundColor: const Color(0xFFF1F8E9),
+        fontFamily: 'Montaser Arabic',
+      ),
+      home: const HomeScreen(),
+      debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _selectedIndex = 0;
+  bool _saldoVisivel = false;
+
+  void _onNavTap(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  void _navegarParaEmDesenvolvimento() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const EmDesenvolvimentoScreen(),
+      ),
+    );
+  }
+
+  void _navegarParaTransferencia() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const TransferenciaScreen(),
+      ),
+    );
+  }
+
+  Widget _buildFunctionItem(IconData icon, String label) {
+    return GestureDetector(
+      onTap: () {
+        if (label == 'Transferir') {
+          _navegarParaTransferencia();
+        } else {
+          _navegarParaEmDesenvolvimento();
+        }
+      },
+      child: SizedBox(
+        width: 70,
+        child: Column(
+          children: [
+            Container(
+              width: 60,
+              height: 60,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, size: 28, color: Color(0xFF325F2A)),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 12),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF325F2A),
+        elevation: 0,
+        toolbarHeight: 120,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            CircleAvatar(
+              radius: 20,
+              backgroundColor: Colors.white70,
+              backgroundImage: AssetImage('assets/profile.jpg'),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Olá, Usuário',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              _saldoVisivel ? Icons.visibility : Icons.visibility_off,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              setState(() {
+                _saldoVisivel = !_saldoVisivel;
+              });
+            },
+          ),
+          const IconButton(
+            icon: Icon(Icons.help_outline, color: Colors.white),
+            onPressed: null,
+          ),
+          const IconButton(
+            icon: Icon(Icons.logout, color: Colors.white),
+            onPressed: null,
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
+
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 16 + kBottomNavigationBarHeight),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Saldo em conta',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        _saldoVisivel ? 'R\$ 5.234,87' : 'R\$ ●●●●',
+                        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  const Icon(Icons.arrow_forward_ios, size: 16),
+                ],
+              ),
+            ),
+
+            const Padding(
+              padding: EdgeInsets.only(top: 16),
+              child: Divider(color: Colors.black, thickness: 0.7),
+            ),
+            const SizedBox(height: 16),
+
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  const SizedBox(width: 8),
+                  _buildFunctionItem(Icons.sync_alt, 'Transferir'),
+                  _buildFunctionItem(Icons.qr_code, 'Pagar'),
+                  _buildFunctionItem(Icons.attach_money, 'Cotação'),
+                  _buildFunctionItem(Icons.account_balance_wallet, 'Caixinha'),
+                  _buildFunctionItem(Icons.trending_up, 'Investir'),
+                  const SizedBox(width: 8),
+                ],
+              ),
+            ),
+
+            const Padding(
+              padding: EdgeInsets.only(top: 16),
+              child: Divider(color: Colors.black, thickness: 0.7),
+            ),
+            const SizedBox(height: 16),
+
+            // CARTÃO DE CRÉDITO
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text(
+                        'Cartão de crédito',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(height: 8),
+                      Text('Fatura atual', style: TextStyle(fontSize: 14)),
+                      SizedBox(height: 4),
+                      Text(
+                        'R\$ 800,00',
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Limite disponível de R\$ 0,00',
+                        style: TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                  const Icon(Icons.arrow_forward_ios, size: 16),
+                ],
+              ),
+            ),
+
+            const Padding(
+              padding: EdgeInsets.only(top: 16),
+              child: Divider(color: Colors.black, thickness: 0.7),
+            ),
+            const SizedBox(height: 16),
+
+            Container(
+              height: 120,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Color(0xFF325F2A),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(
+                  'assets/banner_forest.png',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onNavTap,
+        selectedItemColor: const Color(0xFF325F2A),
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: true,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Início'),
+          BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet_outlined), label: 'Carteira'),
+          BottomNavigationBarItem(icon: Icon(Icons.credit_card), label: 'Cartão'),
+          BottomNavigationBarItem(icon: Icon(Icons.shopping_bag_outlined), label: 'Shop'),
+          BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'Menu'),
+        ],
+      ),
+    );
+  }
+}
+
+class TransferenciaScreen extends StatelessWidget {
+  const TransferenciaScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF325F2A),
+        title: const Text('Transferência', style: TextStyle(color: Colors.white)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: const Center(
+        child: Text('Tela de Transferência'),
+      ),
+    );
+  }
+}
+
+class EmDesenvolvimentoScreen extends StatelessWidget {
+  const EmDesenvolvimentoScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF1F8E9),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF325F2A),
+        title: const Text(
+          "Em Desenvolvimento",
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Image(
+              image: AssetImage("assets/work_in_progress.png"),
+              height: 300,
+            ),
+            SizedBox(height: 20),
+            Text(
+              "Em Desenvolvimento",
+              style: TextStyle(
+                fontFamily: 'Montaser Arabic',
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
