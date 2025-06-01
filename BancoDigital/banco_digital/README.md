@@ -1,16 +1,43 @@
-# banco_digital
+# 🌱 GreenBank
 
-A new Flutter project.
+> 💚 Seu banco digital com consciência sustentável.
 
-## Getting Started
+O **GreenBank** é um aplicativo bancário digital projetado com foco em **simplicidade**, **design moderno** e **responsabilidade ambiental**. Além de funcionalidades comuns a bancos digitais, o GreenBank incentiva boas práticas financeiras e ecológicas para um futuro mais consciente.
 
-This project is a starting point for a Flutter application.
+---
 
-A few resources to get you started if this is your first Flutter project:
+## 🚀 Funcionalidades
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- 👤 Boas-vindas personalizadas com avatar
+- 👁️ Alternar visibilidade do saldo
+- 💸 Saldo e extrato bancário
+- 🔁 Acesso rápido a funções: Transferir, Pagar, Cotação, Investimentos
+- 💳 Visualização da fatura do cartão
+- 🌳 Banner de sustentabilidade com imagem temática
+- 📱 Navegação inferior moderna e funcional
+- 🔧 Tela de funcionalidades futuras (“Em Desenvolvimento”)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+- **Flutter** – SDK principal para construção do app
+- **Dart** – Linguagem de programação
+- **Material Design** – Interface intuitiva e responsiva
+- **Assets personalizados** – Ícones e imagens temáticas
+- **Fonte**: `Montaser Arabic` para estilo único
+
+---
+
+## 🧪 Como rodar o projeto
+
+```bash
+# Clone o repositório
+git clone https://github.com/seu-usuario/greenbank.git
+cd greenbank
+
+# Instale as dependências
+flutter pub get
+
+# Rode o app (emulador ou dispositivo conectado)
+flutter run
