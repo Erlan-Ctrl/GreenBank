@@ -1,0 +1,45 @@
+{
+    // Use o IntelliSense para saber mais sobre os atributos possíveis.
+    // Focalizar para exibir as descrições dos atributos existentes.
+    // Para obter mais informações, acesse: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "GreenBank-1",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "GreenBank-1 (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "GreenBank-1 (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "banco_digital",
+            "cwd": "BancoDigital\\banco_digital",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "banco_digital (profile mode)",
+            "cwd": "BancoDigital\\banco_digital",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "banco_digital (release mode)",
+            "cwd": "BancoDigital\\banco_digital",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}
