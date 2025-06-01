@@ -48,6 +48,49 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _navegarParaTransferencia() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const TransferenciaScreen(),
+      ),
+    );
+  }
+
+  Widget _buildFunctionItem(IconData icon, String label) {
+    return GestureDetector(
+      onTap: () {
+        if (label == 'Transferir') {
+          _navegarParaTransferencia();
+        } else {
+          _navegarParaEmDesenvolvimento();
+        }
+      },
+      child: SizedBox(
+        width: 70,
+        child: Column(
+          children: [
+            Container(
+              width: 60,
+              height: 60,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, size: 28, color: Color(0xFF325F2A)),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 12),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -236,37 +279,29 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+}
 
-  Widget _buildFunctionItem(IconData icon, String label) {
-    return GestureDetector(
-      onTap: _navegarParaEmDesenvolvimento,
-      child: SizedBox(
-        width: 70,
-        child: Column(
-          children: [
-            Container(
-              width: 60,
-              height: 60,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, size: 28, color: Color(0xFF325F2A)),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12),
-            ),
-          ],
+class TransferenciaScreen extends StatelessWidget {
+  const TransferenciaScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF325F2A),
+        title: const Text('Transferência', style: TextStyle(color: Colors.white)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
         ),
+      ),
+      body: const Center(
+        child: Text('Tela de Transferência'),
       ),
     );
   }
 }
 
-// NOVA TELA: EM DESENVOLVIMENTO
 class EmDesenvolvimentoScreen extends StatelessWidget {
   const EmDesenvolvimentoScreen({super.key});
 
@@ -276,10 +311,10 @@ class EmDesenvolvimentoScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFF1F8E9),
       appBar: AppBar(
         backgroundColor: const Color(0xFF325F2A),
-        title: const Text("Em Desenvolvimento",
-          style: TextStyle(
-          color: Colors.white,),
-    ),
+        title: const Text(
+          "Em Desenvolvimento",
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: Center(
         child: Column(

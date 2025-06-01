@@ -31,3 +31,6 @@ flutter:
     - assets/banner_forest.png
     - assets/work_in_progress.png
 
+dependencies:
+  http: ^0.13.5
+  qr_code_scanner: ^1.0.1
