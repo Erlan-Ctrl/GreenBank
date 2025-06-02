@@ -4,8 +4,10 @@ import 'login_page.dart';
 import 'cadastro_page.dart';
 import 'home_screen.dart';
 import 'em_desenvolvimento.dart';
-// NÃO IMPORTAMOS "transferencia_screen.dart" aqui,
-// pois toda a lógica de transferência está em area_de_tranferencia.dart.
+import 'cotacao_page.dart';
+import 'pagar.dart';
+import 'area_de_transferencia.dart';
+import 'extrato_page.dart';
 
 void main() => runApp(GreenBankApp());
 
@@ -17,11 +19,11 @@ class GreenBankApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: const Color(0xFF325F2A),
         scaffoldBackgroundColor: const Color(0xFFF1F8E9),
-        fontFamily: 'Montaser Arabic',
+        fontFamily: 'Montserrat Arabic',
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: Colors.white,
-          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide.none,
@@ -35,6 +37,11 @@ class GreenBankApp extends StatelessWidget {
         '/login': (context) => LoginPage(),
         '/cadastro': (context) => CadastroPage(),
         '/home': (context) => const HomeScreen(),
+        '/em-desenvolvimento': (context) => const EmDesenvolvimentoScreen(),
+        '/cotacao': (context) => const CotacaoPage(),
+        '/pagar': (context) => const Pagar(),
+        '/transferencia': (context) => const TransferenciaScreen(),
+        '/extrato': (context) => const ExtratoScreen(),
       },
     );
   }

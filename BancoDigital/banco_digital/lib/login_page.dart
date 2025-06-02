@@ -1,5 +1,3 @@
-// lib/login_page.dart
-
 import 'package:flutter/material.dart';
 import 'user_repository.dart';
 
@@ -17,21 +15,17 @@ class _LoginPageState extends State<LoginPage> {
 
   void _login() {
     if (_formKey.currentState!.validate()) {
-      // Normaliza o CPF removendo tudo que não seja dígito
       final normalizedCpf = cpf.replaceAll(RegExp(r'\D'), '');
 
-      // Tenta autenticar no repositório
       final canLogin = UserRepository.canLogin(normalizedCpf, senha);
 
       if (canLogin) {
-        // Recupera o nome cadastrado
         final userName = UserRepository.getName(normalizedCpf) ?? 'Usuário';
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Login bem-sucedido!")),
         );
 
-        // Navega para /home, passando o nome como argumento
         Future.delayed(const Duration(milliseconds: 500), () {
           Navigator.pushReplacementNamed(
             context,
@@ -95,7 +89,6 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         const SizedBox(height: 24),
 
-                        // Campo CPF
                         TextFormField(
                           decoration: const InputDecoration(
                             hintText: 'CPF',
@@ -116,7 +109,6 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Campo Senha
                         TextFormField(
                           decoration: const InputDecoration(
                             hintText: 'Senha',
@@ -131,7 +123,6 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         const SizedBox(height: 28),
 
-                        // Botão Entrar
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
@@ -151,7 +142,6 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
 
-                        // “Esqueci a senha”
                         const SizedBox(height: 12),
                         TextButton(
                           onPressed: _esqueciSenha,
@@ -170,7 +160,6 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
 
-                        // Link para cadastro
                         const SizedBox(height: 12),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,

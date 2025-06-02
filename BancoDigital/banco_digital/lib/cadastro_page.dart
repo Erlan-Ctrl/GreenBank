@@ -1,5 +1,3 @@
-// lib/cadastro_page.dart
-
 import 'package:flutter/material.dart';
 import 'user_repository.dart';
 
@@ -19,7 +17,6 @@ class _CadastroPageState extends State<CadastroPage> {
   void _cadastrar() {
     if (_formKey.currentState!.validate()) {
       final normalizedCpf = cpf.replaceAll(RegExp(r'\D'), '');
-      // Ordem correta: CPF, nome, senha
       final success = UserRepository.register(normalizedCpf, nome, senha);
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(

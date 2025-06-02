@@ -1,9 +1,12 @@
-// lib/home_screen.dart
-
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
+import 'package:image_picker/image_picker.dart';
 import 'em_desenvolvimento.dart';
-import 'area_de_tranferencia.dart';
+import 'area_de_transferencia.dart';
 import 'pagar.dart';
+import 'extrato_page.dart';
+import 'cadastro_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,17 +19,30 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   bool _saldoVisivel = false;
   String? _userName;
+  File? _profileImage;
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_userName == null) {
-      final args = ModalRoute.of(context)!.settings.arguments;
+      final args = ModalRoute.of(context)?.settings.arguments;
       if (args is String && args.isNotEmpty) {
         _userName = args;
       } else {
         _userName = 'Usuário';
       }
+    }
+  }
+
+  String _saudacao() {
+    final hora = DateTime.now().hour;
+    if (hora >= 5 && hora < 12) {
+      return 'Bom dia';
+    } else if (hora >= 12 && hora < 18) {
+      return 'Boa tarde';
+    } else {
+      return 'Boa noite';
     }
   }
 
@@ -36,72 +52,70 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _navegarParaEmDesenvolvimento() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const EmDesenvolvimentoScreen(),
-      ),
-    );
-  }
-
-  void _navegarParaTransferencia() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const TransferenciaScreen(),
-      ),
-    );
-  }
-
-  void _navegarParaPagamento() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const Pagar(),
-      ),
-    );
-  }
-
-  Widget _buildFunctionItem(IconData icon, String label) {
-    return GestureDetector(
-      onTap: () {
-        if (label == 'Transferir') {
-          _navegarParaTransferencia();
-        } else if (label == 'Pagar') {
-          _navegarParaPagamento();
-        } else {
-          _navegarParaEmDesenvolvimento();
-        }
-      },
-      child: SizedBox(
-        width: 70,
-        child: Column(
-          children: [
-            Container(
-              width: 60,
-              height: 60,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
+  Future<void> _pickImageSource() async {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_camera),
+                title: const Text('Tirar foto'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickFromCamera();
+                },
               ),
-              child: Icon(icon, size: 28, color: Color(0xFF325F2A)),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12),
-            ),
-          ],
-        ),
-      ),
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Escolher da galeria'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickFromGallery();
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
+  }
+
+  Future<void> _pickFromCamera() async {
+    final XFile? photo = await _picker.pickImage(
+      source: ImageSource.camera,
+      maxWidth: 600,
+      maxHeight: 600,
+    );
+    if (photo != null) {
+      setState(() {
+        _profileImage = File(photo.path);
+      });
+    }
+  }
+
+  Future<void> _pickFromGallery() async {
+    final XFile? image = await _picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 600,
+      maxHeight: 600,
+    );
+    if (image != null) {
+      setState(() {
+        _profileImage = File(image.path);
+      });
+    }
+  }
+
+  void _navegarPara(String rota) {
+    Navigator.pushNamed(context, rota);
   }
 
   @override
   Widget build(BuildContext context) {
-    final displayName = _userName ?? 'Usuário';
+    final nome = _userName ?? 'Usuário';
+    final saudacao = _saudacao();
 
     return Scaffold(
       appBar: AppBar(
@@ -111,14 +125,20 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const CircleAvatar(
-              radius: 20,
-              backgroundColor: Colors.white70,
-              backgroundImage: AssetImage('assets/profile.jpg'),
+            GestureDetector(
+              onTap: _pickImageSource,
+              child: CircleAvatar(
+                radius: 20,
+                backgroundColor: Colors.white70,
+                backgroundImage: _profileImage != null
+                    ? FileImage(_profileImage!)
+                    : const AssetImage('assets/profile.jpg')
+                as ImageProvider,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
-              'Olá, $displayName',
+              '$saudacao, $nome',
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
@@ -143,144 +163,292 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.help_outline, color: Colors.white),
             onPressed: null,
           ),
-          const IconButton(
-            icon: Icon(Icons.logout, color: Colors.white),
-            onPressed: null,
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.white),
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/login');
+            },
           ),
           const SizedBox(width: 8),
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 16 + kBottomNavigationBarHeight),
+        padding:
+        const EdgeInsets.fromLTRB(16, 16, 16, 16 + kBottomNavigationBarHeight),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Cartão "Saldo em conta"
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Saldo em conta',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        _saldoVisivel ? 'R\$ 5.234,87' : 'R\$ ●●●●',
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Icon(Icons.arrow_forward_ios, size: 16),
-                ],
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ExtratoScreen()),
+                );
+              },
+              child: SaldoCard(
+                saldoVisivel: _saldoVisivel,
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.only(top: 16),
-              child: Divider(color: Colors.black, thickness: 0.7),
-            ),
+
+            const SizedBox(height: 16),
+            const Divider(color: Colors.black, thickness: 0.7),
             const SizedBox(height: 16),
 
-            // Barra horizontal de funcionalidades
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
                   const SizedBox(width: 8),
-                  _buildFunctionItem(Icons.sync_alt, 'Transferir'),
-                  _buildFunctionItem(Icons.qr_code, 'Pagar'),
-                  _buildFunctionItem(Icons.attach_money, 'Cotação'),
-                  _buildFunctionItem(Icons.account_balance_wallet, 'Caixinha'),
-                  _buildFunctionItem(Icons.trending_up, 'Investir'),
+                  FuncaoItem(
+                    icon: Icons.sync_alt,
+                    label: 'Transferir',
+                    onTap: () => _navegarPara('/transferencia'),
+                  ),
+                  FuncaoItem(
+                    icon: Icons.qr_code,
+                    label: 'Pagar',
+                    onTap: () => _navegarPara('/pagar'),
+                  ),
+                  FuncaoItem(
+                    icon: Icons.attach_money,
+                    label: 'Cotação',
+                    onTap: () => _navegarPara('/cotacao'),
+                  ),
+                  FuncaoItem(
+                    icon: Icons.account_balance_wallet,
+                    label: 'Caixinha',
+                    onTap: () => _navegarPara('/em-desenvolvimento'),
+                  ),
+                  FuncaoItem(
+                    icon: Icons.trending_up,
+                    label: 'Investir',
+                    onTap: () => _navegarPara('/em-desenvolvimento'),
+                  ),
                   const SizedBox(width: 8),
                 ],
               ),
             ),
 
-            const Padding(
-              padding: EdgeInsets.only(top: 16),
-              child: Divider(color: Colors.black, thickness: 0.7),
-            ),
+            const SizedBox(height: 16),
+            const Divider(color: Colors.black, thickness: 0.7),
             const SizedBox(height: 16),
 
-            // Cartão "Cartão de crédito"
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text('Cartão de crédito',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w500)),
-                      SizedBox(height: 8),
-                      Text('Fatura atual', style: TextStyle(fontSize: 14)),
-                      SizedBox(height: 4),
-                      Text('R\$ 800,00',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
-                      SizedBox(height: 4),
-                      Text('Limite disponível de R\$ 0,00',
-                          style: TextStyle(fontSize: 12, color: Colors.grey)),
-                    ],
-                  ),
-                  const Icon(Icons.arrow_forward_ios, size: 16),
-                ],
-              ),
+            // Cartão de crédito
+            CartaoWidget(
+              valorFatura: 800.00,
+              limite: 0.00,
+              progresso: 1.0,
             ),
 
-            const Padding(
-              padding: EdgeInsets.only(top: 16),
-              child: Divider(color: Colors.black, thickness: 0.7),
-            ),
+            const SizedBox(height: 16),
+            const Divider(color: Colors.black, thickness: 0.7),
             const SizedBox(height: 16),
 
-            // Banner inferior
+            // Banner
             Container(
-              height: 120,
-              width: double.infinity,
               decoration: BoxDecoration(
                 color: const Color(0xFF325F2A),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.asset('assets/banner_forest.png', fit: BoxFit.cover),
+                child: Image.asset(
+                  'assets/banner_forest.png',
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: 120,
+                ),
               ),
             ),
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onNavTap,
-        selectedItemColor: const Color(0xFF325F2A),
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Início'),
-          BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet_outlined), label: 'Carteira'),
-          BottomNavigationBarItem(icon: Icon(Icons.credit_card), label: 'Cartão'),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_bag_outlined), label: 'Shop'),
-          BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'Menu'),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: SalomonBottomBar(
+          currentIndex: _selectedIndex,
+          onTap: _onNavTap,
+          items: [
+            SalomonBottomBarItem(
+              icon: const Icon(Icons.home_outlined),
+              title: const Text("Início"),
+              selectedColor: const Color(0xFF325F2A),
+            ),
+            SalomonBottomBarItem(
+              icon: const Icon(Icons.account_balance_wallet_outlined),
+              title: const Text("Carteira"),
+              selectedColor: const Color(0xFF325F2A),
+            ),
+            SalomonBottomBarItem(
+              icon: const Icon(Icons.credit_card),
+              title: const Text("Cartão"),
+              selectedColor: const Color(0xFF325F2A),
+            ),
+            SalomonBottomBarItem(
+              icon: const Icon(Icons.shopping_bag_outlined),
+              title: const Text("Shop"),
+              selectedColor: const Color(0xFF325F2A),
+            ),
+            SalomonBottomBarItem(
+              icon: const Icon(Icons.menu),
+              title: const Text("Menu"),
+              selectedColor: const Color(0xFF325F2A),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SaldoCard extends StatelessWidget {
+  final bool saldoVisivel;
+
+  const SaldoCard({
+    required this.saldoVisivel,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      width: double.infinity,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Saldo em conta',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                saldoVisivel ? 'R\$ 5.234,87' : 'R\$ ●●●●',
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const Icon(Icons.arrow_forward_ios, size: 16),
         ],
+      ),
+    );
+  }
+}
+
+class CartaoWidget extends StatelessWidget {
+  final double valorFatura;
+  final double limite;
+  final double progresso;
+
+  const CartaoWidget({
+    required this.valorFatura,
+    required this.limite,
+    required this.progresso,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Cartão de crédito',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Fatura atual',
+            style: TextStyle(fontSize: 14),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'R\$ ${valorFatura.toStringAsFixed(2)}',
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          LinearProgressIndicator(
+            value: progresso,
+            backgroundColor: Colors.grey.shade300,
+            color: const Color(0xFF4CAF50),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Limite disponível de R\$ ${limite.toStringAsFixed(2)}',
+            style: const TextStyle(fontSize: 12, color: Colors.grey),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '${(progresso * 100).toStringAsFixed(0)}% do limite utilizado',
+            style: const TextStyle(fontSize: 12, color: Colors.grey),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class FuncaoItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  const FuncaoItem({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(60),
+        onTap: onTap,
+        child: Column(
+          children: [
+            Container(
+              width: 60,
+              height: 60,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF4CAF50), Color(0xFF325F2A)],
+                ),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, size: 28, color: Colors.white),
+            ),
+            const SizedBox(height: 6),
+            SizedBox(
+              width: 70,
+              child: Text(
+                label,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 12),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
